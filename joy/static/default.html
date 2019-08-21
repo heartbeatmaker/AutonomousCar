@@ -1,0 +1,57 @@
+<html>
+<head>
+<!--<script src="/static/init.js"></script>-->
+<meta http-equiv="cache-control" content="max-age=0">
+<meta http-equiv="cache-control" content="no-cache">
+<meta http-equiv="cache-control" content="no-store">
+<meta http-equiv="expires" content="-1">
+<meta http-equiv="expires" content="Tue, 01 Jan 1980 11:00:00 GMT">
+<meta http-equiv="pragma" content="no-cache">
+<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+<style>
+      body {
+        margin: 0px;
+        padding: 0px;
+      }
+      #joystick {
+        border: 3px solid #9C9898;
+      }
+    </style>
+	<script src="/static/joy.js"></script>
+</head>
+<body>
+<div id="joyDiv" style="width:400px;height:400px;margin-bottom:20px;"></div>
+	<!-- Posizione X:<input id="posizioneX" type="text" /></br>
+	Posizione Y:<input id="posizioneY" type="text" /></br>
+	Direzione:<input id="direzione" type="text" /></br> -->
+  X :<input id="X" type="text" /> Velocity :<input id="V" type="text" value="40"/></br>
+  <!-- Y :<input id="Y" type="text" /> -->
+
+    <script type="text/javascript">
+// Create JoyStick object into the DIV 'joyDiv'
+var joy = new JoyStick('joyDiv');
+
+//var inputPosX = document.getElementById("posizioneX");
+//var inputPosY = document.getElementById("posizioneY");
+//var direzione = document.getElementById("direzione");
+var x = document.getElementById("X");
+//var y = document.getElementById("Y");
+
+//joy.SetWidth();
+
+//setInterval(function(){ inputPosX.value=joy.GetPosX(); }, 50);
+//setInterval(function(){ inputPosY.value=joy.GetPosY(); }, 50);
+//setInterval(function(){ direzione.value=joy.GetDir(); }, 50);
+setInterval(function(){ x.value=joy.GetX(); }, 50);
+//setInterval(function(){ y.value=joy.GetY(); }, 50);
+
+
+    </script>
+
+</br>
+<button id="runId" style="width: 100px; height: 50px;" onclick="set_motor_start()">start</button>
+<button id="recordId" style="width: 100px; height: 50px;" onclick="set_record()">record</button>
+
+
+</body>
+</html>
