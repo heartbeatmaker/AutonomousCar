@@ -12,7 +12,7 @@ Lesson4
 cd /home/orangepi/autonomousCar/lesson4 또는 cd ../lesson4
 
 3.	시범 운전하기
-sudo python3 keyboard.py 
+sudo python3 **keyboard.py** 
 
 s: 운전모드/정지모드 토글방식
 방향키로 직진/좌회전/우회전
@@ -25,15 +25,16 @@ r: 데이터수집모드/데이터수정지모드 토글방식
 q;  프로그램 종료
 
 5.	훈련데이터 분석
-sudo python3 data_analysis.py
+좌회전, 우회전, 직진, 정지 데이터의 수량과 비율을 계산한다
+sudo python3 **data_analysis.py**
 
 6.	좌우이미지 반전 데이터 만들기
-sudo python3 decalcom.py
+sudo python3 **decalcom.py**
 
 sudo python3 data_analysis.py 데이터 확인하기
 
 7.	인공지능 훈련 및 관찰
-sudo python3 train.py
+sudo python3 **train.py**
 
 터미널에서 아래 명령어 실행
 tensorboard --logdir=./logs –port=6006
@@ -41,7 +42,7 @@ tensorboard --logdir=./logs –port=6006
 localhost:6006
 
 8.	시뮬레이션
-sudo python3 simulate.py
+sudo python3 **simulate.py**
 
 9.	테스트
 sudo python3 airun.py

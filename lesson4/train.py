@@ -1,3 +1,11 @@
+'''
+인공지능 훈련 및 관찰
+
+인공지능이 어떻게 학습하는지 관찰할 수 있다
+
+'''
+
+
 import os
 import tensorflow as tf
 from tensorflow.core.protobuf import saver_pb2
@@ -10,12 +18,19 @@ begin = time.strftime('%Y-%m-%d_%H-%M-%S')
 
 LOGDIR = './save'
 
+# Sets the threshold for what messages will be logged.
 tf.logging.set_verbosity(tf.logging.ERROR)
 
+# TensorFlow = 연산을 실행하기 위한 클래스
+# Session 객체 = Operation 객체가 실행되고 Tensor 객체가 계산되는 환경을 캡슐화한다
+
+# 생성시 자기 자신을 기본 세션으로 설치한다 -- 무슨 말? 세션을 시작한다?
 sess = tf.InteractiveSession()
 
 L2NormConst = 0.001
 
+# Returns all variables created with trainable=True
+# trainable 변수와 non-trainable 변수의 차이점?
 train_vars = tf.trainable_variables()
 
 start_learning_rate = 0.5e-3    ###1e-3
@@ -34,7 +49,13 @@ loss_val = tf.losses.softmax_cross_entropy( onehot_labels=onehot_labels, logits=
 ###sess.run(tf.initialize_all_variables())
 sess.run(tf.global_variables_initializer())
 
-# create a summary to monitor cost tensor
+
+
+
+'''
+create a summary to monitor cost tensor
+'''
+
 ###tf.scalar_summary("loss", loss)
 tf.summary.scalar("loss", loss)
 
