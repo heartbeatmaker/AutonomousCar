@@ -13,48 +13,79 @@ import sys
 import signal
 import csv
 
+import socket
+import threading
 
-'''
-if __name__ == '__main__' 쓰는 이유?
+from etc.client import client
 
-파이썬은 자동으로 실행되는 메인함수가 없다
-파이썬은 메인 함수가 없는 대신 들여쓰기 하지 않은 모든 코드(level 0코드)를 실행한다
-(정의된 함수나 클래스는 실행x)
 
-__name__은 현재 모듈의 이름을 담고있는 내장 변수이다
-python myscript.py 같이 이 모듈이 '직접 실행되는 경우'에만,__name__ 은 "__main__"으로 설정된다
 
-myscript.py의 코드가 다른 모듈에 의해 import된 경우, 함수와 객체의 정의는 import되지만, 
-__name__이 "__main__"이 아니기 때문에 if문은 실행되지 않는다
 
-==> 직접 실행할 때와 import해서 실행할 때를 구분해준다
-'''
+
+def clientAcceptingThread():
+    while True:
+        client_socket, addr = server_socket.accept()
+        print("connected client : ", addr[0], addr[1])
+
+        client_socket_list.append(client(client_socket, addr[0]))
+        print("number of clients : "+str(len(client_socket_list)))
+
+
+def send_message(message):
+    for i in client_socket_list:
+        print("sending message ("+message+") to "+i.ip)
+        i.send_msg(message)
+
+
+
 
 if __name__ == '__main__':
 
+    client_socket_list = list()
+
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind(('192.168.0.77', 8999))
+    server_socket.listen(0)
+    print("Listening on 8999")
+
+    t = threading.Thread(target = clientAcceptingThread)
+    t.start()
+
 
     sess = tf.InteractiveSession()
+    print("1")
     saver = tf.train.Saver()
+    print("2")
+
     saver.restore(sess, "save/model.ckpt")
+    print("3")
 
     start_flag = False
+    print("4")
+
 
     #testing speed variation
     speed_change_flag = False
+    print("5")
 
     if speed_change_flag:
+        print("6")
         cfg.maxturn_speed = cfg.ai_maxturn_speed
         cfg.minturn_speed = cfg.ai_minturn_speed
         cfg.normal_speed_left = cfg.ai_normal_speed_left
         cfg.normal_speed_right = cfg.ai_normal_speed_right
-    
+
+    print("7")
     c = cv2.VideoCapture(0)
     c.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
     c.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
     #c.set(cv2.CAP_PROP_FPS, 15)
 
+
     while(True):
         _,full_image = c.read()
+
+
         #full_image = cv2.resize(full_image, (320,240))
         image = scipy.misc.imresize(full_image[cfg.modelheight:], [66, 200]) / 255.0
         image1 = scipy.misc.imresize(full_image[cfg.modelheight:], [66*2, 200*2])
@@ -69,19 +100,25 @@ if __name__ == '__main__':
         #print('wheel value:', cfg.wheel, wheel)
         print('wheel value:', cfg.wheel, model.softmax(wheel))
 
-    
+
         k = cv2.waitKey(5)
         if k == ord('q'):  #'q' key to stop program
             break
 
         """ Toggle Start/Stop motor movement """
-        if k == ord('a'): 
-            if start_flag == False: 
+        if k == ord('a'):
+            if start_flag == False:
                 start_flag = True
+                on = threading.Thread(target=send_message, args=("on",))
+                on.start()
+                # send_message("on")
             else:
                 start_flag = False
+                off = threading.Thread(target=send_message, args=("off",))
+                off.start()
+                # send_message("off")
             print('start flag:',start_flag)
-   
+
         #to avoid collision when ultrasonic sensor is available
         length = 30 #dc.get_distance()
         if  5 < length and length < 15 and start_flag:
@@ -90,7 +127,7 @@ if __name__ == '__main__':
             print('Stop to avoid collision')
             time.sleep(0.5)
             continue
-        
+
         if start_flag:
             if cfg.wheel == 0:
                 hw.motor_two_speed(0)
@@ -99,7 +136,7 @@ if __name__ == '__main__':
             if cfg.wheel == 1:   #left turn
                 hw.motor_two_speed(cfg.minturn_speed)
                 hw.motor_one_speed(cfg.maxturn_speed)
-            
+
 
             if cfg.wheel == 2:
                 hw.motor_two_speed(cfg.normal_speed_left)
@@ -108,12 +145,12 @@ if __name__ == '__main__':
             if cfg.wheel == 3:   #right turn
                 hw.motor_two_speed(cfg.maxturn_speed)
                 hw.motor_one_speed(cfg.minturn_speed)
-        
+
         else:
             hw.motor_one_speed(0)
             hw.motor_two_speed(0)
             cfg.wheel = 0
 
-        
+
 hw.motor_clean()
 cv2.destroyAllWindows()
