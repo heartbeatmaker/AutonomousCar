@@ -18,12 +18,13 @@ import threading
 
 from etc.client import client
 
+import requests
 
 
 
 
 def clientAcceptingThread():
-    while True:
+    while 1:
         client_socket, addr = server_socket.accept()
         print("connected client : ", addr[0], addr[1])
 
@@ -109,15 +110,14 @@ if __name__ == '__main__':
         if k == ord('a'):
             if start_flag == False:
                 start_flag = True
-                on = threading.Thread(target=send_message, args=("on",))
-                on.start()
-                # send_message("on")
+                t = threading.Thread(target=send_message, args=("on",))
+                r = requests.get("http://18.220.168.16/state_run.php")  # 앱에 주행중 표시
             else:
                 start_flag = False
-                off = threading.Thread(target=send_message, args=("off",))
-                off.start()
-                # send_message("off")
+                t = threading.Thread(target=send_message, args=("off",))
+                r = requests.get("http://18.220.168.16/state_stop.php")
             print('start flag:',start_flag)
+            t.start()
 
         #to avoid collision when ultrasonic sensor is available
         length = 30 #dc.get_distance()
@@ -154,3 +154,5 @@ if __name__ == '__main__':
 
 hw.motor_clean()
 cv2.destroyAllWindows()
+
+
